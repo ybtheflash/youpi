@@ -22,6 +22,8 @@ import backgroundImage from "./assets/main.jpg";
 import cardbackgroundImage from "./assets/card-bg.jpg";
 import { useFonts, Comfortaa_300Light } from "@expo-google-fonts/comfortaa";
 import ViewShot from "react-native-view-shot";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 // import RNFS from "react-native-fs";
 
 const { width, height } = Dimensions.get("window");
@@ -50,23 +52,35 @@ function MainScreen() {
 
   const shareQRCode = async () => {
     try {
+      // Capture the QR code view as an image
       const uri = await viewShotRef.current.capture();
-      const result = await Share.share({
-        message: "Here's my UPI QR Code",
-        url: uri,
-      });
 
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // Shared with activity type of result.activityType
-        } else {
-          // Shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // Dismissed
+      // On Android, copy the file to a shareable location
+      const newUri = FileSystem.cacheDirectory + "qrCode.jpg";
+      await FileSystem.copyAsync({ from: uri, to: newUri });
+
+      // Prepare the message to share
+      let message = `Here's my UPI QR Code:`;
+      if (upiId) {
+        message += `\nUPI ID: ${upiId}`;
       }
+      if (amount) {
+        message += `\nAmount: ${amount}`;
+      }
+      if (payeeName) {
+        message += `\nPayee Name: ${payeeName}`;
+      }
+
+      // Use Sharing.shareAsync to share the image along with the message
+      await Sharing.shareAsync(newUri, {
+        mimeType: "image/jpg", // Android requires a mimeType for sharing
+        dialogTitle: "Share QR Code",
+        UTI: "public.jpeg", // iOS requires a UTI (Uniform Type Identifier) for sharing
+        // Include the message with the shared image
+        message: message,
+      });
     } catch (error) {
-      console.error(error.message);
+      console.error("Failed to share QR code", error);
     }
   };
 
@@ -153,18 +167,18 @@ function MainScreen() {
                 blurRadius={5}
                 borderRadius={20}
               >
-                <Animated.View style={{ opacity: fadeAnim }}>
-                  <Text style={styles.fadeText}>youpi</Text>
-                  <Image
-                    source={require("./assets/icon.png")}
-                    style={styles.customIconBefore}
-                  />
-                </Animated.View>
-                {qrValue ? (
-                  <ViewShot
-                    ref={viewShotRef}
-                    options={{ format: "jpg", quality: 0.9 }}
-                  >
+                <ViewShot
+                  ref={viewShotRef}
+                  options={{ format: "jpg", quality: 0.9 }}
+                >
+                  <Animated.View style={{ opacity: fadeAnim }}>
+                    <Text style={styles.fadeText}>youpi</Text>
+                    <Image
+                      source={require("./assets/icon.png")}
+                      style={styles.customIconBefore}
+                    />
+                  </Animated.View>
+                  {qrValue ? (
                     <View style={styles.qrContainer}>
                       <Text style={styles.branding}>youpi</Text>
                       <Image
@@ -182,8 +196,8 @@ function MainScreen() {
                         <Text style={styles.payeeName}>{payeeName}</Text>
                       ) : null}
                     </View>
-                  </ViewShot>
-                ) : null}
+                  ) : null}
+                </ViewShot>
                 <TextInput
                   style={styles.input}
                   onChangeText={setUpiId}
@@ -392,7 +406,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: "absolute",
     top: -60,
-    left: -20,
+    left: 60,
     fontWeight: "bold",
     fontSize: 30,
     color: "white", // Nature green text color
@@ -431,7 +445,7 @@ const styles = StyleSheet.create({
     height: 40,
     resizeMode: "contain",
     position: "absolute",
-    right: -30,
+    right: 50,
     top: -60,
   },
   customIconBefore: {
