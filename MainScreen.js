@@ -24,9 +24,9 @@ import ViewShot from "react-native-view-shot";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 // import RNFS from "react-native-fs";
+import { SafeAreaView } from "react-native";
 
-const { width, height } = Dimensions.get("window");
-
+// const { width, height } = Dimensions.get("window");
 function MainScreen() {
   const [upiId, setUpiId] = useState("");
   const [amount, setAmount] = useState("");
@@ -195,243 +195,250 @@ function MainScreen() {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={handlePress}>
-      <View style={styles.fullScreen}>
-        <ImageBackground
-          source={backgroundImage}
-          style={styles.backgroundImage}
-          blurRadius={5}
-        >
-          {isLoading && (
-            <Animated.View
-              style={[styles.loadingContainer, { opacity: loadingOpacity }]}
-            >
-              <LottieView
-                source={require("./assets/loading.json")} // Path to your Lottie loading animation file
-                autoPlay
-                loop
-                style={styles.loadingAnimation}
-              />
-            </Animated.View>
-          )}
-          {showResetAnimation && (
-            <Animated.View style={styles.fullScreenAnimation}>
-              <LottieView
-                source={require("./assets/resetAnimation.json")} // Path to your Lottie reset animation file
-                autoPlay
-                loop={false}
-                onAnimationFinish={() => {
-                  // Optionally handle animation finish event
-                  setShowResetAnimation(false);
-                }}
-                style={{
-                  width: 200,
-                  height: 200,
-                }}
-              />
-            </Animated.View>
-          )}
-          <View style={styles.overlay}>
-            <View style={styles.card}>
-              <ImageBackground
-                source={cardbackgroundImage}
-                style={styles.cardbackgroundImage}
-                blurRadius={5}
-                borderRadius={20}
+    <SafeAreaView style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={handlePress}>
+        <View style={styles.fullScreen}>
+          <ImageBackground
+            source={backgroundImage}
+            style={styles.backgroundImage}
+            blurRadius={5}
+          >
+            {isLoading && (
+              <Animated.View
+                style={[styles.loadingContainer, { opacity: loadingOpacity }]}
               >
-                <ViewShot
-                  ref={viewShotRef}
-                  options={{ format: "jpg", quality: 0.9 }}
+                <LottieView
+                  source={require("./assets/loading.json")} // Path to your Lottie loading animation file
+                  autoPlay
+                  loop
+                  style={styles.loadingAnimation}
+                />
+              </Animated.View>
+            )}
+            {showResetAnimation && (
+              <Animated.View style={styles.fullScreenAnimation}>
+                <LottieView
+                  source={require("./assets/resetAnimation.json")} // Path to your Lottie reset animation file
+                  autoPlay
+                  loop={false}
+                  onAnimationFinish={() => {
+                    // Optionally handle animation finish event
+                    setShowResetAnimation(false);
+                  }}
+                  style={{
+                    width: 200,
+                    height: 200,
+                  }}
+                />
+              </Animated.View>
+            )}
+            <View style={styles.overlay}>
+              <View style={styles.card}>
+                <ImageBackground
+                  source={cardbackgroundImage}
+                  style={styles.cardbackgroundImage}
+                  blurRadius={5}
+                  borderRadius={20}
                 >
-                  <Animated.View style={{ opacity: fadeAnim }}>
-                    <Text style={styles.fadeText}>youpi</Text>
-                    <Image
-                      source={require("./assets/icon.png")}
-                      style={styles.customIconBefore}
-                    />
-                  </Animated.View>
-                  {qrValue ? (
-                    <View style={styles.qrContainer}>
-                      <Text style={styles.branding}>youpi</Text>
+                  <ViewShot
+                    ref={viewShotRef}
+                    options={{ format: "jpg", quality: 0.9 }}
+                  >
+                    <Animated.View style={{ opacity: fadeAnim }}>
+                      <Text style={styles.fadeText}>youpi</Text>
                       <Image
                         source={require("./assets/icon.png")}
-                        style={styles.customIcon}
+                        style={styles.customIconBefore}
                       />
+                    </Animated.View>
+                    {qrValue ? (
+                      <View style={styles.qrContainer}>
+                        <Text style={styles.branding}>youpi</Text>
+                        <Image
+                          source={require("./assets/icon.png")}
+                          style={styles.customIcon}
+                        />
 
-                      <QRCode
-                        value={qrValue}
-                        size={200}
-                        color="white"
-                        backgroundColor="transparent"
+                        <QRCode
+                          value={qrValue}
+                          size={200}
+                          color="white"
+                          backgroundColor="transparent"
+                        />
+                        {payeeName ? (
+                          <Text style={styles.payeeName}>{payeeName}</Text>
+                        ) : null}
+                      </View>
+                    ) : null}
+                  </ViewShot>
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={setUpiId}
+                    value={upiId}
+                    placeholder="Enter UPI ID"
+                    placeholderTextColor="#A9A9A9"
+                    required
+                  />
+                  <Animated.View style={{ opacity: amountInputOpacity }}>
+                    {showAmountInput && (
+                      <TextInput
+                        style={styles.input}
+                        onChangeText={setAmount}
+                        value={amount}
+                        placeholder="Enter Amount"
+                        placeholderTextColor="#A9A9A9"
+                        keyboardType="numeric"
                       />
-                      {payeeName ? (
-                        <Text style={styles.payeeName}>{payeeName}</Text>
-                      ) : null}
-                    </View>
-                  ) : null}
-                </ViewShot>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setUpiId}
-                  value={upiId}
-                  placeholder="Enter UPI ID"
-                  placeholderTextColor="#A9A9A9"
-                  required
-                />
-                <Animated.View style={{ opacity: amountInputOpacity }}>
-                  {showAmountInput && (
-                    <TextInput
-                      style={styles.input}
-                      onChangeText={setAmount}
-                      value={amount}
-                      placeholder="Enter Amount"
-                      placeholderTextColor="#A9A9A9"
-                      keyboardType="numeric"
-                    />
-                  )}
-                </Animated.View>
+                    )}
+                  </Animated.View>
 
-                <Animated.View style={{ opacity: payeeNameInputOpacity }}>
-                  {showPayeeNameInput && (
-                    <TextInput
-                      style={styles.input}
-                      onChangeText={setPayeeName}
-                      value={payeeName}
-                      placeholder="Enter Payee Name"
-                      placeholderTextColor="#A9A9A9"
-                    />
-                  )}
-                </Animated.View>
-                <View style={styles.buttonContainer}>
-                  {qrValue && (
+                  <Animated.View style={{ opacity: payeeNameInputOpacity }}>
+                    {showPayeeNameInput && (
+                      <TextInput
+                        style={styles.input}
+                        onChangeText={setPayeeName}
+                        value={payeeName}
+                        placeholder="Enter Payee Name"
+                        placeholderTextColor="#A9A9A9"
+                      />
+                    )}
+                  </Animated.View>
+                  <View style={styles.buttonContainer}>
+                    {qrValue && (
+                      <TouchableOpacity
+                        onPress={toggleMenu}
+                        style={styles.advancedButton}
+                      >
+                        <LottieView
+                          ref={advancedIconRef}
+                          source={require("./assets/advancedIcon.json")}
+                          autoPlay
+                          loop={false}
+                          style={styles.lottieIcon}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    <Modal
+                      animationType="fade"
+                      transparent={true}
+                      visible={isMenuVisible}
+                      onRequestClose={toggleMenu}
+                    >
+                      <TouchableOpacity
+                        style={styles.modalOverlay}
+                        activeOpacity={1}
+                        onPressOut={toggleMenu}
+                      >
+                        <View style={styles.floatingMenu}>
+                          <TouchableOpacity onPress={toggleAboutModal}>
+                            <LottieView
+                              source={require("./assets/aboutIcon.json")}
+                              autoPlay
+                              loop={false}
+                              style={styles.lottieIcon}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={shareQRCode}>
+                            <LottieView
+                              source={require("./assets/shareIcon.json")}
+                              autoPlay
+                              loop={false}
+                              style={styles.lottieIcon}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={toggleAmountInputVisibility}
+                          >
+                            <LottieView
+                              source={require("./assets/amountIcon.json")}
+                              autoPlay
+                              loop={false}
+                              style={styles.lottieIcon}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={togglePayeeNameInputVisibility}
+                          >
+                            <LottieView
+                              source={require("./assets/payeeNameIcon.json")}
+                              autoPlay
+                              loop={false}
+                              style={styles.lottieIcon}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </TouchableOpacity>
+                    </Modal>
+                    <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={isAboutModalVisible}
+                      onRequestClose={toggleAboutModal}
+                    >
+                      <TouchableWithoutFeedback onPress={toggleAboutModal}>
+                        <View style={styles.centeredView}>
+                          <View style={styles.aboutModalView}>
+                            <Text style={styles.modalText}>
+                              App Name: Youpi
+                            </Text>
+                            <Text style={styles.modalText}>
+                              Developer: Siesta
+                            </Text>
+                            <Text style={styles.modalText}>
+                              Contact: ybtheflash@gmail.com
+                            </Text>
+                            <Text style={styles.modalText}>
+                              App Version: 1.0.0
+                            </Text>
+                            <Text style={styles.modalText}>
+                              Year of App: 2024
+                            </Text>
+                            <Text style={styles.modalText}>
+                              This app is not connected to UPI or NPCI in any
+                              form or way. It is just a sample project.
+                            </Text>
+                            <TouchableOpacity
+                              style={[styles.button3, styles.buttonClose]}
+                              onPress={toggleAboutModal}
+                            >
+                              <Text style={styles.textStyle}>Close</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </Modal>
                     <TouchableOpacity
-                      onPress={toggleMenu}
-                      style={styles.advancedButton}
+                      onPress={() => {
+                        generateQR();
+                        handlePress();
+                      }}
+                      style={styles.button}
+                    >
+                      <Text style={styles.buttonText}>Generate QR</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={resetForm}
+                      style={styles.resetButton}
                     >
                       <LottieView
-                        ref={advancedIconRef}
-                        source={require("./assets/advancedIcon.json")}
+                        ref={resetIconRef}
+                        source={require("./assets/resetIcon.json")}
                         autoPlay
                         loop={false}
                         style={styles.lottieIcon}
                       />
                     </TouchableOpacity>
-                  )}
-                  <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={isMenuVisible}
-                    onRequestClose={toggleMenu}
-                  >
-                    <TouchableOpacity
-                      style={styles.modalOverlay}
-                      activeOpacity={1}
-                      onPressOut={toggleMenu}
-                    >
-                      <View style={styles.floatingMenu}>
-                        <TouchableOpacity onPress={toggleAboutModal}>
-                          <LottieView
-                            source={require("./assets/aboutIcon.json")}
-                            autoPlay
-                            loop={false}
-                            style={styles.lottieIcon}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={shareQRCode}>
-                          <LottieView
-                            source={require("./assets/shareIcon.json")}
-                            autoPlay
-                            loop={false}
-                            style={styles.lottieIcon}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={toggleAmountInputVisibility}>
-                          <LottieView
-                            source={require("./assets/amountIcon.json")}
-                            autoPlay
-                            loop={false}
-                            style={styles.lottieIcon}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={togglePayeeNameInputVisibility}
-                        >
-                          <LottieView
-                            source={require("./assets/payeeNameIcon.json")}
-                            autoPlay
-                            loop={false}
-                            style={styles.lottieIcon}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableOpacity>
-                  </Modal>
-                  <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={isAboutModalVisible}
-                    onRequestClose={toggleAboutModal}
-                  >
-                    <TouchableWithoutFeedback onPress={toggleAboutModal}>
-                      <View style={styles.centeredView}>
-                        <View style={styles.aboutModalView}>
-                          <Text style={styles.modalText}>App Name: Youpi</Text>
-                          <Text style={styles.modalText}>
-                            Developer: Siesta
-                          </Text>
-                          <Text style={styles.modalText}>
-                            Contact: ybtheflash@gmail.com
-                          </Text>
-                          <Text style={styles.modalText}>
-                            App Version: 1.0.0
-                          </Text>
-                          <Text style={styles.modalText}>
-                            Year of App: 2024
-                          </Text>
-                          <Text style={styles.modalText}>
-                            This app is not connected to UPI or NPCI in any form
-                            or way. It is just a sample project.
-                          </Text>
-                          <TouchableOpacity
-                            style={[styles.button3, styles.buttonClose]}
-                            onPress={toggleAboutModal}
-                          >
-                            <Text style={styles.textStyle}>Close</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </TouchableWithoutFeedback>
-                  </Modal>
-                  <TouchableOpacity
-                    onPress={() => {
-                      generateQR();
-                      handlePress();
-                    }}
-                    style={styles.button}
-                  >
-                    <Text style={styles.buttonText}>Generate QR</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={resetForm}
-                    style={styles.resetButton}
-                  >
-                    <LottieView
-                      ref={resetIconRef}
-                      source={require("./assets/resetIcon.json")}
-                      autoPlay
-                      loop={false}
-                      style={styles.lottieIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </ImageBackground>
+                  </View>
+                </ImageBackground>
+              </View>
             </View>
-          </View>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+          </ImageBackground>
+        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   loadingContainer: {
     ...StyleSheet.absoluteFillObject, // Fill the entire screen
@@ -501,8 +508,8 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-    width: width,
-    height: height,
+    width: "100%",
+    height: "100%",
     alignItems: "center",
     justifyContent: "center",
     resizeMode: "cover",
