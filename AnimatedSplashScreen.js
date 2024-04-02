@@ -7,7 +7,7 @@ const AnimatedSplashScreen = ({ navigation }) => {
     if (navigation) {
       setTimeout(() => {
         navigation.replace("Main"); // Replace 'Main' with the name of your main screen
-      }, 2500); // Adjust the timing based on your animation
+      }, 1500); // Adjust the timing based on your animation
     }
   }, [navigation]);
 
@@ -18,9 +18,10 @@ const AnimatedSplashScreen = ({ navigation }) => {
           width: 400,
           height: 400,
         }}
-        source={require("./assets/splashloader.json")} // Path to your Lottie JSON file
+        source={require("./assets/splashloader3.json")} // Path to your Lottie JSON file
         autoPlay
         loop
+        speed={2}
         //speed={0.9} // Adjust the speed here, lower value slows down the animation
         resizeMode="cover"
       />
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#000", // Adjust the background color as needed
+    backgroundColor: "#fff", // Adjust the background color as needed
   },
 });
 

@@ -14,7 +14,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Modal,
-  Share,
 } from "react-native";
 import LottieView from "lottie-react-native";
 import QRCode from "react-native-qrcode-svg";
@@ -33,20 +32,43 @@ function MainScreen() {
   const [amount, setAmount] = useState("");
   const [payeeName, setPayeeName] = useState("");
   const [qrValue, setQrValue] = useState("");
-
+  const [showResetAnimation, setShowResetAnimation] = useState(false);
   const fadeAnim = useState(new Animated.Value(1))[0];
-
+  const [showAmountInput, setShowAmountInput] = useState(false);
+  const [showPayeeNameInput, setShowPayeeNameInput] = useState(false);
   const [fontsLoaded] = useFonts({
     Comfortaa_300Light,
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const loadingOpacity = useRef(new Animated.Value(0)).current; // Initial opacity is 0 (hidden)
   const viewShotRef = useRef(null);
-
+  const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const amountInputOpacity = useRef(new Animated.Value(0)).current; // Initial opacity is 0 (hidden)
+  const payeeNameInputOpacity = useRef(new Animated.Value(0)).current; // Initial opacity is 0 (hidden)
+  const toggleAmountInputVisibility = () => {
+    Animated.timing(amountInputOpacity, {
+      toValue: showAmountInput ? 0 : 1, // Animate to 1 (visible) or back to 0 (hidden)
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setShowAmountInput(!showAmountInput); // Update state to keep track of visibility
+  };
 
+  const togglePayeeNameInputVisibility = () => {
+    Animated.timing(payeeNameInputOpacity, {
+      toValue: showPayeeNameInput ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setShowPayeeNameInput(!showPayeeNameInput); // Update state to keep track of visibility
+  };
   const toggleMenu = () => {
     setIsMenuVisible(!isMenuVisible);
   };
-
+  const toggleAboutModal = () => {
+    setIsAboutModalVisible(!isAboutModalVisible);
+  };
   const advancedIconRef = useRef(null);
   const resetIconRef = useRef(null);
 
@@ -100,22 +122,34 @@ function MainScreen() {
 
   const generateQR = () => {
     if (upiId.trim() !== "") {
-      let upiLink = `upi://pay?pa=${upiId}`;
-      if (amount.trim() !== "") {
-        upiLink += `&am=${amount}`;
-      }
-      if (payeeName.trim() !== "") {
-        upiLink += `&pn=${encodeURIComponent(payeeName)}`;
-      }
-      setQrValue(upiLink);
-      if (advancedIconRef.current) {
-        advancedIconRef.current.reset();
-        advancedIconRef.current.play();
-      }
-      if (resetIconRef.current) {
-        resetIconRef.current.reset();
-        resetIconRef.current.play();
-      }
+      // Show loading animation
+      setIsLoading(true);
+      Animated.timing(loadingOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+
+      // Simulate QR code generation delay
+      setTimeout(() => {
+        let upiLink = `upi://pay?pa=${upiId}`;
+        if (amount.trim() !== "") {
+          upiLink += `&am=${amount}`;
+        }
+        if (payeeName.trim() !== "") {
+          upiLink += `&pn=${encodeURIComponent(payeeName)}`;
+        }
+        setQrValue(upiLink);
+
+        // Fade out loading animation and show QR code
+        Animated.timing(loadingOpacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }).start(() => {
+          setIsLoading(false); // Hide loading animation
+        });
+      }, 2000); // Assume QR code generation takes 2 seconds
     }
   };
 
@@ -123,24 +157,33 @@ function MainScreen() {
     Keyboard.dismiss();
   };
 
-  // const saveQRCodeToDevice = () => {
-  //   viewShotRef.current.capture().then((uri) => {
-  //     const destPath = `${RNFS.DocumentDirectoryPath}/MyQRCode.jpg`;
-  //     RNFS.moveFile(uri, destPath)
-  //       .then(() => {
-  //         console.log("QR Code saved to", destPath);
-  //         // You might want to use react-native-photo or similar to save to the gallery
-  //       })
-  //       .catch((error) => console.error("Failed to save QR Code", error));
-  //   });
-  // };
-
   const resetForm = () => {
+    setShowResetAnimation(true);
+
     setUpiId("");
     setAmount("");
     setPayeeName("");
     setQrValue("");
+
+    setShowAmountInput(false);
+    setShowPayeeNameInput(false);
+
+    Animated.timing(amountInputOpacity, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(payeeNameInputOpacity, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+
     fadeAnim.setValue(1);
+    setTimeout(() => {
+      setShowResetAnimation(false);
+    }, 2000);
   };
 
   if (!fontsLoaded) {
@@ -159,6 +202,35 @@ function MainScreen() {
           style={styles.backgroundImage}
           blurRadius={5}
         >
+          {isLoading && (
+            <Animated.View
+              style={[styles.loadingContainer, { opacity: loadingOpacity }]}
+            >
+              <LottieView
+                source={require("./assets/loading.json")} // Path to your Lottie loading animation file
+                autoPlay
+                loop
+                style={styles.loadingAnimation}
+              />
+            </Animated.View>
+          )}
+          {showResetAnimation && (
+            <Animated.View style={styles.fullScreenAnimation}>
+              <LottieView
+                source={require("./assets/resetAnimation.json")} // Path to your Lottie reset animation file
+                autoPlay
+                loop={false}
+                onAnimationFinish={() => {
+                  // Optionally handle animation finish event
+                  setShowResetAnimation(false);
+                }}
+                style={{
+                  width: 200,
+                  height: 200,
+                }}
+              />
+            </Animated.View>
+          )}
           <View style={styles.overlay}>
             <View style={styles.card}>
               <ImageBackground
@@ -204,22 +276,32 @@ function MainScreen() {
                   value={upiId}
                   placeholder="Enter UPI ID"
                   placeholderTextColor="#A9A9A9"
+                  required
                 />
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setAmount}
-                  value={amount}
-                  placeholder="Enter Amount"
-                  placeholderTextColor="#A9A9A9"
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setPayeeName}
-                  value={payeeName}
-                  placeholder="Enter Payee Name"
-                  placeholderTextColor="#A9A9A9"
-                />
+                <Animated.View style={{ opacity: amountInputOpacity }}>
+                  {showAmountInput && (
+                    <TextInput
+                      style={styles.input}
+                      onChangeText={setAmount}
+                      value={amount}
+                      placeholder="Enter Amount"
+                      placeholderTextColor="#A9A9A9"
+                      keyboardType="numeric"
+                    />
+                  )}
+                </Animated.View>
+
+                <Animated.View style={{ opacity: payeeNameInputOpacity }}>
+                  {showPayeeNameInput && (
+                    <TextInput
+                      style={styles.input}
+                      onChangeText={setPayeeName}
+                      value={payeeName}
+                      placeholder="Enter Payee Name"
+                      placeholderTextColor="#A9A9A9"
+                    />
+                  )}
+                </Animated.View>
                 <View style={styles.buttonContainer}>
                   {qrValue && (
                     <TouchableOpacity
@@ -247,9 +329,7 @@ function MainScreen() {
                       onPressOut={toggleMenu}
                     >
                       <View style={styles.floatingMenu}>
-                        <TouchableOpacity
-                          onPress={() => console.log("About pressed")}
-                        >
+                        <TouchableOpacity onPress={toggleAboutModal}>
                           <LottieView
                             source={require("./assets/aboutIcon.json")}
                             autoPlay
@@ -257,14 +337,6 @@ function MainScreen() {
                             style={styles.lottieIcon}
                           />
                         </TouchableOpacity>
-                        {/* <TouchableOpacity onPress={saveQRCodeToDevice}>
-                          <LottieView
-                            source={require("./assets/saveIcon.json")}
-                            autoPlay
-                            loop={false}
-                            style={styles.lottieIcon}
-                          />
-                        </TouchableOpacity> */}
                         <TouchableOpacity onPress={shareQRCode}>
                           <LottieView
                             source={require("./assets/shareIcon.json")}
@@ -273,8 +345,62 @@ function MainScreen() {
                             style={styles.lottieIcon}
                           />
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={toggleAmountInputVisibility}>
+                          <LottieView
+                            source={require("./assets/amountIcon.json")}
+                            autoPlay
+                            loop={false}
+                            style={styles.lottieIcon}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={togglePayeeNameInputVisibility}
+                        >
+                          <LottieView
+                            source={require("./assets/payeeNameIcon.json")}
+                            autoPlay
+                            loop={false}
+                            style={styles.lottieIcon}
+                          />
+                        </TouchableOpacity>
                       </View>
                     </TouchableOpacity>
+                  </Modal>
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={isAboutModalVisible}
+                    onRequestClose={toggleAboutModal}
+                  >
+                    <TouchableWithoutFeedback onPress={toggleAboutModal}>
+                      <View style={styles.centeredView}>
+                        <View style={styles.aboutModalView}>
+                          <Text style={styles.modalText}>App Name: Youpi</Text>
+                          <Text style={styles.modalText}>
+                            Developer: Siesta
+                          </Text>
+                          <Text style={styles.modalText}>
+                            Contact: ybtheflash@gmail.com
+                          </Text>
+                          <Text style={styles.modalText}>
+                            App Version: 1.0.0
+                          </Text>
+                          <Text style={styles.modalText}>
+                            Year of App: 2024
+                          </Text>
+                          <Text style={styles.modalText}>
+                            This app is not connected to UPI or NPCI in any form
+                            or way. It is just a sample project.
+                          </Text>
+                          <TouchableOpacity
+                            style={[styles.button3, styles.buttonClose]}
+                            onPress={toggleAboutModal}
+                          >
+                            <Text style={styles.textStyle}>Close</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </TouchableWithoutFeedback>
                   </Modal>
                   <TouchableOpacity
                     onPress={() => {
@@ -307,6 +433,24 @@ function MainScreen() {
   );
 }
 const styles = StyleSheet.create({
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject, // Fill the entire screen
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 1)", // Semi-transparent background
+    zIndex: 10, // Make sure it covers other content
+  },
+  loadingAnimation: {
+    width: "50%",
+    height: "50%",
+  },
+  fullScreenAnimation: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,1)", // Semi-transparent background
+    zIndex: 100, // Ensure it's above other content
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
@@ -327,18 +471,11 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Align children horizontally
     alignItems: "center", // Center children vertically in the container
     justifyContent: "center", // Center the container content horizontally
-    marginTop: 20,
-  },
-  button: {
-    backgroundColor: "#6C63FF",
-    borderRadius: 25,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-    marginRight: 0, // Add some space between the button and the reset icon
+    marginTop: 10,
   },
   resetButton: {
     paddingLeft: 25,
-    marginTop: 20,
+    marginTop: 15,
   },
   advancedButton: {
     paddingRight: 25,
@@ -359,7 +496,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "white",
     fontFamily: "Comfortaa_300Light",
-    marginBottom: 40,
+    marginBottom: 20,
     left: -20,
   },
   backgroundImage: {
@@ -368,6 +505,7 @@ const styles = StyleSheet.create({
     height: height,
     alignItems: "center",
     justifyContent: "center",
+    resizeMode: "cover",
   },
   cardbackgroundImage: {
     padding: 20,
@@ -385,14 +523,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   card: {
-    // backgroundImage: `url("./assets/card-bg.jpg")`,
     borderRadius: 20,
-    // borderStyle: "solid",
-    // borderColor: "#078142",
-    // padding: 20,
-    // paddingTop: 90,
-    // alignItems: "center",
-    // justifyContent: "center",
     overflow: "hidden",
     backgroundColor: "transparent",
   },
@@ -454,6 +585,44 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     position: "absolute",
     right: -20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  aboutModalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button3: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
 
