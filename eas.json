@@ -1,8 +1,10 @@
 {
-  "cli": {
-    "version": ">= 7.6.2"
-  },
   "build": {
+    "androidapk": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"
@@ -11,6 +13,9 @@
       "distribution": "internal"
     },
     "production": {}
+  },
+  "cli": {
+    "version": ">= 5.9.1"
   },
   "submit": {
     "production": {}
