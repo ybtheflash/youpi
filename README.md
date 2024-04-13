@@ -17,8 +17,8 @@ Youpi is a simple yet powerful app that instantly converts UPI IDs into scannabl
 
 ## Installation
 
-Youpi is currently available for Android devices. To install, download the APK file from the [releases page](#) and install it on your Android device.
+Youpi is currently available for Android devices. To install, download the APK file from the [releases page](https://github.com/ybtheflash/youpi/releases/tag/1.0.0) and install it on your Android device.
 
 ## Feedback
 
-We'd love to hear your feedback! If you have any suggestions, issues, or just want to say hi, feel free to [contact us](#).
+We'd love to hear your feedback! If you have any suggestions, issues, or just want to say hi, feel free to [contact us](mailto:ybtheflash@gmail.com).
