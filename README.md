@@ -22,3 +22,7 @@ Youpi is currently available for Android devices. To install, download the APK f
 ## Feedback
 
 We'd love to hear your feedback! If you have any suggestions, issues, or just want to say hi, feel free to [contact us](mailto:ybtheflash@gmail.com).
+
+## License
+
+This project is licensed under the [MIT License](https://github.com/ybtheflash/youpi/blob/master/LICENSE). Feel free to use, modify, and distribute the code as per the terms of the license.
