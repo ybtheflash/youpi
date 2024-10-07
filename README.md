@@ -18,10 +18,9 @@ Youpi is a simple yet powerful app that instantly converts UPI IDs into scannabl
 4. Share the generated QR code for easy transactions.
 
 ## Screenshots
-![WhatsApp Image 2024-10-07 at 19 41 45_e6092fdf](https://github.com/user-attachments/assets/8f154ed1-9f47-4a56-81b6-9bdee88b1020)
-![WhatsApp Image 2024-10-07 at 19 41 45_62896467](https://github.com/user-attachments/assets/99efcad9-a0be-4f93-b2b8-49c0d4c6769b)
-![WhatsApp Image 2024-10-07 at 19 41 45_8874ace5](https://github.com/user-attachments/assets/18d9e17d-f377-40c7-96c7-2d29b9e064a9)
-
+![WhatsApp Image 2024-10-07 at 19 41 45_8874ace5 (2)](https://github.com/user-attachments/assets/43c71eb5-b777-4335-8c48-5c4bda13c014)
+![WhatsApp Image 2024-10-07 at 19 41 45_62896467](https://github.com/user-attachments/assets/10d137d8-b838-4654-9ced-d95081f3407e)
+![WhatsApp Image 2024-10-07 at 19 41 45_e6092fdf](https://github.com/user-attachments/assets/01128750-543a-4729-945b-0e817c9e4596)
 
 ## Installation
 
