@@ -1,4 +1,6 @@
 # Youpi - Your UPI QR Code Generator for All UPI apps.
+![splash(1)](https://github.com/user-attachments/assets/44485e6e-79b7-46ee-8005-3f11c85cd384)
+
 
 Youpi is a simple yet powerful app that instantly converts UPI IDs into scannable QR codes. With Youpi, you can easily generate QR codes for your UPI transactions, customize the request amount, and even set the payee's name, all in one go.
 
