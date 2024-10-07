@@ -1,5 +1,5 @@
 # Youpi - Your UPI QR Code Generator for All UPI apps.
-![image](https://github.com/user-attachments/assets/bc8a949f-d27c-42f9-90ae-0716bd0881bc)
+![image](https://github.com/user-attachments/assets/9f49f120-c238-498a-891a-de8f61b9c2b7)
 ![dfg](https://github.com/user-attachments/assets/c1d41f56-16b7-4a93-87e5-091ad57c6be0)
 
 
